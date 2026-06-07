@@ -13,6 +13,36 @@ dependencies = [
   "typer>=0.21.1",
 ]
 
+keywords = [
+  "applescript",
+  "browser",
+  "chrome",
+  "cli",
+  "jxa",
+  "macos",
+  "markdown",
+  "safari",
+  "tabs",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: MacOS",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/rapjul/save-browser-session-macos"
+Issues = "https://github.com/rapjul/save-browser-session-macos/issues"
+Repository = "https://github.com/rapjul/save-browser-session-macos"
+
 [project.scripts]
 save-browser-session = "save_browser_session.main:app"
 

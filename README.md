@@ -12,15 +12,31 @@ A robust Python CLI tool for macOS to save your open browser tabs into a formatt
 
 ## Installation
 
-This project is managed with `uv`.
+Install the package directly from PyPI using `uv`:
+
+```bash
+uv tool install save-browser-session
+```
+
+Or run it directly without installing:
+
+```bash
+uv tool run save-browser-session
+```
+
+### Development Installation
+
+If you are developing or running from the source repository:
 
 ```bash
 uv tool install .
 ```
 
-Or just run it directly from the source directory:
+Or, clone and run it directly from the source directory:
 
 ```bash
+git clone https://github.com/rapjul/save-browser-session-macos
+cd save-browser-session-macos
 uv run save-browser-session
 ```
 
@@ -31,10 +47,10 @@ uv run save-browser-session
 Save all tabs from the frontmost browser:
 
 ```bash
-uv run save-browser-session --all
+save-browser-session --all 
 ```
 
-This will copy the result to your clipboard and save a markdown file to your iCloud Documents (configurable in source).
+This will copy the result to your clipboard and save a Markdown file to the current working directory (configurable in source).
 
 ### Options
 
@@ -51,13 +67,13 @@ This will copy the result to your clipboard and save a markdown file to your iCl
 **Save only current window:**
 
 ```bash
-uv run save-browser-session --current
+save-browser-session --current
 ```
 
 **Run silently in background (Autosave):**
 
 ```bash
-uv run save-browser-session --autosave
+save-browser-session --autosave
 ```
 
 ### Browser-Specific Commands
@@ -67,13 +83,13 @@ To target any of the other supported macOS browsers explicitly, use the `--brows
 - **Safari**:
 
     ```bash
-    uv run save-browser-session --browser "Safari"
+    save-browser-session --browser "Safari"
     ```
 
 - **Google Chrome**:
 
     ```bash
-    uv run save-browser-session --browser "Google Chrome"
+    save-browser-session --browser "Google Chrome"
     ```
 
     > [!NOTE]
@@ -82,7 +98,7 @@ To target any of the other supported macOS browsers explicitly, use the `--brows
 - **Microsoft Edge**:
 
     ```bash
-    uv run save-browser-session --browser "Microsoft Edge"
+    save-browser-session --browser "Microsoft Edge"
     ```
 
     > [!NOTE]
@@ -91,37 +107,37 @@ To target any of the other supported macOS browsers explicitly, use the `--brows
 - **Brave Browser**:
 
     ```bash
-    uv run save-browser-session --browser "Brave Browser"
+    save-browser-session --browser "Brave Browser"
     ```
 
 - **Arc**:
 
     ```bash
-    uv run save-browser-session --browser "Arc"
+    save-browser-session --browser "Arc"
     ```
 
 - **Orion**:
 
     ```bash
-    uv run save-browser-session --browser "Orion"
+    save-browser-session --browser "Orion"
     ```
 
 - **Vivaldi**:
 
     ```bash
-    uv run save-browser-session --browser "Vivaldi"
+    save-browser-session --browser "Vivaldi"
     ```
 
 - **Chromium**:
 
     ```bash
-    uv run save-browser-session --browser "Chromium"
+    save-browser-session --browser "Chromium"
     ```
 
 - **Opera**:
 
     ```bash
-    uv run save-browser-session --browser "Opera"
+    save-browser-session --browser "Opera"
     ```
 
 ### Firefox - No Support
@@ -136,17 +152,36 @@ You can automatically open the saved Markdown file in your favorite editor:
 
 ```bash
 # Open in a specific app (e.g., TextEdit)
-uv run save-browser-session --open-with TextEdit
+save-browser-session --open-with TextEdit
 
 # Open in VS Code
-uv run save-browser-session --open-with "Visual Studio Code"
+save-browser-session --open-with "Visual Studio Code"
 
 # Open in Antigravity
-uv run save-browser-session --open-with "Antigravity"
+save-browser-session --open-with "Antigravity"
 
 # Use a custom application name
-uv run save-browser-session --custom-open-with "Sublime Text"
+save-browser-session --custom-open-with "Sublime Text"
 
 # Use a custom application name
-uv run save-browser-session --custom-open-with "Zed"
+save-browser-session --custom-open-with "Zed"
 ```
+
+## Publishing to PyPI
+
+This package is built and published using `uv`:
+
+1. **Build the package**:
+
+    ```bash
+    uv build
+    ```
+
+    This generates source distribution (`.tar.gz`) and wheel (`.whl`) archives in the `dist/` directory.
+
+2. **Publish to PyPI**:
+    Make sure you have your PyPI API token set in the `UV_PUBLISH_TOKEN` environment variable, then run:
+
+    ```bash
+    uv publish
+    ```

@@ -48,7 +48,7 @@ save-browser-session = "save_browser_session.main:app"
 
 [dependency-groups]
 dev = [
-  "pytest>=9.0.2",
+  "pytest>=9.0.3",
   "ruff>=0.14.13",
 ]
 

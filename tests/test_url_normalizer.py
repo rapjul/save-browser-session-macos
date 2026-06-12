@@ -14,12 +14,18 @@ def test_tracking_param_removal() -> None:
 
 
 def test_youtube_share_param() -> None:
-    """Test YouTube share parameter is removed."""
-    result = remove_tracking_params("https://youtube.com/watch?v=abc123&share=xyz")
+    """Test YouTube share parameter, si, and t are removed."""
+    result = remove_tracking_params(
+        "https://youtube.com/watch?v=abc123&share=xyz&si=tracking_id&t=1m20s"
+    )
 
-    assert "share" not in result.cleaned
+    assert "share=" not in result.cleaned
+    assert "si=" not in result.cleaned
+    assert "t=" not in result.cleaned
     assert "v=abc123" in result.cleaned
     assert "share" in result.removed_params
+    assert "si" in result.removed_params
+    assert "t" in result.removed_params
     assert result.is_modified
 
 

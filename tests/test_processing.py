@@ -10,6 +10,29 @@ def test_clean_url() -> None:
         clean_url("https://youtube.com/watch?v=123&t=1m20s")
         == "https://youtube.com/watch?v=123"
     )
+    # Test additional YouTube formats for t parameter removal
+    assert (
+        clean_url("https://youtube.com/watch?v=123&t=80s&feature=shared")
+        == "https://youtube.com/watch?v=123&feature=shared"
+    )
+    assert clean_url("https://youtu.be/123?t=80") == "https://youtu.be/123"
+    assert (
+        clean_url("https://youtube.com/watch?v=123&t=2m")
+        == "https://youtube.com/watch?v=123"
+    )
+    assert (
+        clean_url("https://youtube.com/watch?v=123&t=16m39s")
+        == "https://youtube.com/watch?v=123"
+    )
+    assert (
+        clean_url("https://youtube.com/watch?v=123&t=2h58m59s")
+        == "https://youtube.com/watch?v=123"
+    )
+    # Test YouTube share tracking parameter (si) removal
+    assert (
+        clean_url("https://youtube.com/watch?v=123&si=tracking_id")
+        == "https://youtube.com/watch?v=123"
+    )
     assert (
         clean_url("https://github.com/repo?tab=readme-ov-file")
         == "https://github.com/repo"

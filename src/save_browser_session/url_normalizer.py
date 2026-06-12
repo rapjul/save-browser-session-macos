@@ -83,8 +83,10 @@ TRACKING_PARAMS = {
     "ref_",
     "psc",
     # YouTube
-    "share",
-    # Note: 't' (timestamp) is already handled by existing regex in clean_url()
+    "is",  # Frequently appears in shared URLs from mobile devices
+    "share",  # Share tracking parameter
+    "si",  # Share tracking parameter
+    "t",  # Timestamp parameter
 }
 
 

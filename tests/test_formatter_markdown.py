@@ -64,3 +64,37 @@ def test_markdown_padding_small() -> None:
     # count=1 digit. max_width=2.
     # "1." -> "1." + 1 space (fmt) = "1. "
     assert "1. [Tab 1]" in content
+
+
+def test_markdown_url_as_title() -> None:
+    """
+    Tests that a tab whose title is identical to its URL (e.g. an unloaded tab)
+    is formatted as a plain URL link: <url>.
+    """
+    browser = MagicMock(spec=Browser)
+    browser.name = "TestBrowser"
+
+    # Tab where title is identical to url (simulating an unloaded tab)
+    tabs = [
+        Tab(
+            title="https://www.nyctrackbook.com/collections/current-edition.pdf",
+            url="https://www.nyctrackbook.com/collections/current-edition.pdf",
+        )
+    ]
+    windows = [Window(1, tabs)]
+
+    result = generate_formatted_content(
+        browser=browser,
+        windows=windows,
+        session_name="Test Session",
+        include_empty=True,
+        save_all=True,
+        timestamp=datetime.now(),
+        format_type="markdown",
+    )
+
+    content = result.content
+    # It should format as a plain URL link: <url>
+    assert (
+        "1. <https://www.nyctrackbook.com/collections/current-edition.pdf>" in content
+    )

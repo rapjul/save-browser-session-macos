@@ -1,11 +1,11 @@
 [project]
 name = "save-browser-session"
-version = "0.1.0"
+version = "0.2.0"
 description = "A powerful CLI and GUI tool to save browser tabs from Safari, Chrome, and more to Markdown files on macOS."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
-  { name = "rapjul", email = "46605047+rapjul@users.noreply.github.com" }
+  { name = "rapjul", email = "46605047+rapjul@users.noreply.github.com" },
 ]
 dependencies = [
   "pyperclip>=1.11.0",

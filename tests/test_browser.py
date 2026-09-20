@@ -242,3 +242,64 @@ class TestChromiumBrowserIsCloudflareChallenge:
 
         # 1-based tab 6 → 0-based index 5
         assert "tabs[5]" in captured[0]
+
+
+# ---------------------------------------------------------------------------
+# ChromiumBrowser.get_windows Tab Group Enrichment
+# ---------------------------------------------------------------------------
+
+
+class TestChromiumBrowserGetWindows:
+    """Tests for tab group enrichment in ChromiumBrowser.get_windows()."""
+
+    def _make_browser(self) -> ChromiumBrowser:
+        """Creates a ChromiumBrowser instance for Microsoft Edge."""
+        return ChromiumBrowser("Microsoft Edge")
+
+    def test_enriches_tabs_with_tab_groups(self) -> None:
+        """Tabs are enriched with their tab group names when matching tab IDs exist."""
+        browser = self._make_browser()
+        mock_jxa_output = (
+            '[{"os_id": 1001, "tabs": ['
+            '{"title": "Tab A", "url": "https://a.com", "id": "101"},'
+            '{"title": "Tab B", "url": "https://b.com", "id": "102"},'
+            '{"title": "Tab C", "url": "https://c.com", "id": "103"}'
+            "]}]"
+        )
+        mock_groups = {101: "Thingino", 102: "Thingino"}
+
+        with patch.object(browser, "_run_jxa", return_value=mock_jxa_output):
+            with patch(
+                "save_browser_session.browser.get_chromium_tab_groups",
+                return_value=mock_groups,
+            ):
+                windows = browser.get_windows()
+
+        assert len(windows) == 1
+        assert len(windows[0].tabs) == 3
+        assert windows[0].tabs[0].group == "Thingino"
+        assert windows[0].tabs[0].id == "101"
+        assert windows[0].tabs[1].group == "Thingino"
+        assert windows[0].tabs[2].group is None
+        assert windows[0].tabs[2].id == "103"
+
+    def test_handles_session_reader_failure_gracefully(self) -> None:
+        """If session reading fails or throws, tabs are returned safely with group=None."""
+        browser = self._make_browser()
+        mock_jxa_output = (
+            '[{"os_id": 1001, "tabs": ['
+            '{"title": "Tab A", "url": "https://a.com", "id": "101"}'
+            "]}]"
+        )
+
+        with patch.object(browser, "_run_jxa", return_value=mock_jxa_output):
+            with patch(
+                "save_browser_session.browser.get_chromium_tab_groups",
+                side_effect=RuntimeError("Disk read failure"),
+            ):
+                windows = browser.get_windows()
+
+        assert len(windows) == 1
+        assert len(windows[0].tabs) == 1
+        assert windows[0].tabs[0].group is None
+        assert windows[0].tabs[0].title == "Tab A"

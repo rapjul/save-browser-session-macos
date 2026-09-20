@@ -3,12 +3,29 @@ import subprocess
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from .chromium_session import get_chromium_tab_groups
+
 
 @dataclass
 class Tab:
+    """Represents an individual browser tab.
+
+    Attributes
+    ----------
+    title : str
+        The title of the webpage.
+    url : str
+        The URL of the webpage.
+    id : str | None
+        The optional persistent tab identifier provided by the browser.
+    group : str | None
+        The optional name of the tab group this tab belongs to.
+    """
+
     title: str
     url: str
     id: str | None = None
+    group: str | None = None
 
 
 @dataclass
@@ -362,11 +379,18 @@ class ChromiumBrowser(Browser):
 
             const titles = tabs.title(); // Chrome uses .title()
             const urls = tabs.url();
+            let ids = [];
+            try {{ ids = tabs.id(); }} catch(e) {{}}
 
             for (let t = 0; t < titles.length; t++) {{
+                let tabId = null;
+                if (ids && t < ids.length) {{
+                    try {{ tabId = String(ids[t]); }} catch(e) {{}}
+                }}
                 winTabs.push({{
                     title: titles[t],
-                    url: urls[t]
+                    url: urls[t],
+                    id: tabId
                 }});
             }}
             output.push({{
@@ -383,9 +407,33 @@ class ChromiumBrowser(Browser):
         except json.JSONDecodeError:
             return []
 
+        # Read tab group assignments from the browser session storage
+        tab_groups: dict[int, str] = {}
+        try:
+            tab_groups = get_chromium_tab_groups(self.name)
+        except Exception:
+            tab_groups = {}
+
         windows: list[Window] = []
         for i, win_data in enumerate(data):
-            tabs = [Tab(t["title"], t["url"]) for t in win_data["tabs"]]
+            tabs: list[Tab] = []
+            for t in win_data["tabs"]:
+                tab_id_str: str | None = t.get("id")
+                group_name: str | None = None
+                if tab_id_str is not None:
+                    try:
+                        group_name = tab_groups.get(int(tab_id_str))
+                    except (ValueError, TypeError):
+                        group_name = None
+
+                tabs.append(
+                    Tab(
+                        title=t["title"],
+                        url=t["url"],
+                        id=tab_id_str,
+                        group=group_name,
+                    )
+                )
             windows.append(Window(id=i + 1, tabs=tabs, os_id=win_data.get("os_id")))
 
         return windows

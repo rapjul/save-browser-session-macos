@@ -26,3 +26,24 @@ def test_html_generation() -> None:
     assert 'id="copyFiltered"' in html
     # Check simple JS presence
     assert "navigator.clipboard.writeText" in html
+
+
+def test_html_generation_with_tab_groups() -> None:
+    """Test that HTML export formats tab groups with distinct group headings."""
+    browser = MagicMock(spec=Browser)
+    browser.name = "Microsoft Edge"
+    windows = [
+        Window(
+            1,
+            [
+                Tab("Local Tab", "http://example.com/1", group="Local Services"),
+                Tab("Ungrouped Tab", "http://example.com/2", group=None),
+            ],
+        ),
+    ]
+    html = generate_html(browser, windows, "Test Session", datetime.now())
+
+    assert "<h3>Local Services (1 tabs)</h3>" in html
+    assert "<h3>Ungrouped Tabs (1 tabs)</h3>" in html
+    assert "http://example.com/1" in html
+    assert "http://example.com/2" in html

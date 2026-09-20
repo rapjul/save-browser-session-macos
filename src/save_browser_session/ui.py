@@ -154,9 +154,28 @@ class TerminalUI(UserInterface):
                 f"[bold yellow]Window {win.id}[/bold yellow] ({len(win.tabs)} tabs)"
             )
             win_text = f"Window {win.id}:\n"
-            for tab in win.tabs:
-                w_node.add(f"[green]{tab.title}[/green] [dim]({tab.url})[/dim]")
-                win_text += f"- {tab.title} ({tab.url})\n"
+
+            has_groups = any(t.group for t in win.tabs)
+            if not has_groups:
+                for tab in win.tabs:
+                    w_node.add(f"[green]{tab.title}[/green] [dim]({tab.url})[/dim]")
+                    win_text += f"- {tab.title} ({tab.url})\n"
+            else:
+                from itertools import groupby
+
+                for group_name, group_tabs_iter in groupby(
+                    win.tabs, key=lambda t: t.group
+                ):
+                    group_tabs = list(group_tabs_iter)
+                    group_header = group_name if group_name else "Ungrouped Tabs"
+                    g_node = w_node.add(
+                        f"[bold magenta]{group_header}[/bold magenta] ({len(group_tabs)} tabs)"
+                    )
+                    win_text += f"  {group_header}:\n"
+                    for tab in group_tabs:
+                        g_node.add(f"[green]{tab.title}[/green] [dim]({tab.url})[/dim]")
+                        win_text += f"  - {tab.title} ({tab.url})\n"
+
             full_text += win_text + "\n"
 
         self.console.print(root)
